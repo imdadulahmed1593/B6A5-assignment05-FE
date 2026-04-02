@@ -65,7 +65,7 @@ export default function LoginPage() {
               Welcome Back
             </h1>
             <p className="text-secondary-600 mt-2">
-              Sign in to continue to SkillBridge
+              Sign in to continue to Learnzy
             </p>
           </div>
 

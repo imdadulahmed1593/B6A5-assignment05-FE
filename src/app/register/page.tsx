@@ -77,7 +77,7 @@ export default function RegisterPage() {
               Create Account
             </h1>
             <p className="text-secondary-600 mt-2">
-              Join SkillBridge and start learning today
+              Join Learnzy and start learning today
             </p>
           </div>
 

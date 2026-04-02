@@ -8,7 +8,7 @@ import Footer from "@/components/shared/Footer";
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
-  title: "SkillBridge - Connect with Expert Tutors",
+  title: "Learnzy - Connect with Expert Tutors",
   description:
     "Find and book expert tutors for any subject. Learn anything with personalized tutoring sessions.",
 };

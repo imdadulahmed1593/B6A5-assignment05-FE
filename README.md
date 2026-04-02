@@ -1,4 +1,4 @@
-# SkillBridge Frontend
+# Learnzy Frontend
 
 A modern tutoring platform frontend built with Next.js 14, enabling students to find and book sessions with expert tutors.
 

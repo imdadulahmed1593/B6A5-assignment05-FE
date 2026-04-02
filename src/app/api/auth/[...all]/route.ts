@@ -1,6 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:5000";
+const normalizeBackendUrl = (url: string) => {
+  const trimmed = url.trim().replace(/\/$/, "");
+
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+    return trimmed;
+  }
+
+  return `https://${trimmed}`;
+};
+
+const BACKEND_URL = normalizeBackendUrl(
+  process.env.BACKEND_URL || "http://localhost:5000",
+);
 
 async function handler(req: NextRequest) {
   // Get the path after /api/auth/

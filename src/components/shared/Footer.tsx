@@ -8,7 +8,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="col-span-1 md:col-span-2">
-            <h3 className="text-2xl font-bold text-white mb-4">SkillBridge</h3>
+            <h3 className="text-2xl font-bold text-white mb-4">Learnzy</h3>
             <p className="text-secondary-400 mb-4 max-w-md">
               Connect with expert tutors and learn anything. Our platform makes
               it easy to find, book, and learn from the best tutors in any
@@ -100,9 +100,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-secondary-800 mt-8 pt-8 text-center text-secondary-500">
-          <p>
-            &copy; {new Date().getFullYear()} SkillBridge. All rights reserved.
-          </p>
+          <p>&copy; {new Date().getFullYear()} Learnzy. All rights reserved.</p>
         </div>
       </div>
     </footer>
