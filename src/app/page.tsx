@@ -62,68 +62,120 @@ export default async function Home() {
     getCategories(),
     getFeaturedTutors(),
   ]);
+
   return (
-    <div>
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary-600 to-primary-800 text-white">
-        <div className="container-custom py-20 md:py-32">
-          <div className="max-w-3xl">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              Connect with Expert Tutors, Learn Anything
-            </h1>
-            <p className="text-xl md:text-2xl text-primary-100 mb-8">
-              Find the perfect tutor for any subject. Book sessions instantly
-              and start learning today.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link
-                href="/tutors"
-                className="btn-primary text-center text-lg px-8 py-3"
-              >
-                Find a Tutor
-              </Link>
-              <Link
-                href="/register"
-                className="btn bg-white text-primary-600 hover:bg-primary-50 text-center text-lg px-8 py-3"
-              >
-                Become a Tutor
-              </Link>
+    <div className="bg-gradient-to-b from-cyan-50 via-white to-slate-50">
+      {/* Announcement Banner + Hero */}
+      <section className="relative overflow-hidden bg-slate-950 text-white">
+        <div className="absolute inset-0">
+          <div className="absolute -top-28 -right-12 h-80 w-80 rounded-full bg-cyan-400/25 blur-3xl" />
+          <div className="absolute top-36 -left-16 h-72 w-72 rounded-full bg-emerald-400/20 blur-3xl" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(34,211,238,0.18),transparent_40%)]" />
+        </div>
+
+        <div className="relative container-custom py-6 md:py-8">
+          <div className="inline-flex items-center gap-3 rounded-full border border-cyan-300/35 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-100 backdrop-blur-sm">
+            <span className="inline-flex h-2.5 w-2.5 rounded-full bg-cyan-300" />
+            New on Learnzy: Guided learning tracks and smarter tutor matching.
+          </div>
+        </div>
+
+        <div className="relative container-custom pb-20 pt-8 md:pb-24 md:pt-10">
+          <div className="grid items-center gap-10 lg:grid-cols-2">
+            <div className="max-w-2xl">
+              <p className="mb-4 text-sm uppercase tracking-[0.22em] text-cyan-200">
+                Learn Faster, With Clarity
+              </p>
+              <h1 className="text-4xl font-bold leading-tight md:text-6xl">
+                Build Real Skills
+                <span className="text-cyan-300"> With Expert Mentors</span>
+              </h1>
+              <p className="mt-6 text-lg text-slate-200 md:text-xl">
+                Find the right tutor, book in minutes, and make steady progress
+                with focused 1:1 sessions.
+              </p>
+              <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+                <Link
+                  href="/tutors"
+                  className="btn rounded-xl bg-cyan-400 px-8 py-3 text-center text-base font-semibold text-slate-950 hover:bg-cyan-300"
+                >
+                  Explore Tutors
+                </Link>
+                <Link
+                  href="/register"
+                  className="btn rounded-xl border border-white/35 bg-white/10 px-8 py-3 text-center text-base font-semibold text-white hover:bg-white/20"
+                >
+                  Join Learnzy
+                </Link>
+              </div>
+            </div>
+
+            <div className="rounded-3xl border border-white/15 bg-white/5 p-6 shadow-2xl shadow-cyan-900/20 backdrop-blur-md">
+              <p className="mb-6 text-sm uppercase tracking-[0.18em] text-cyan-200">
+                Platform Highlights
+              </p>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="rounded-2xl bg-white/10 p-4">
+                  <p className="text-3xl font-bold text-cyan-300">1:1</p>
+                  <p className="mt-1 text-sm text-slate-200">
+                    Personal sessions
+                  </p>
+                </div>
+                <div className="rounded-2xl bg-white/10 p-4">
+                  <p className="text-3xl font-bold text-emerald-300">24/7</p>
+                  <p className="mt-1 text-sm text-slate-200">
+                    Flexible booking
+                  </p>
+                </div>
+                <div className="rounded-2xl bg-white/10 p-4">
+                  <p className="text-3xl font-bold text-amber-300">Top</p>
+                  <p className="mt-1 text-sm text-slate-200">Rated tutors</p>
+                </div>
+                <div className="rounded-2xl bg-white/10 p-4">
+                  <p className="text-3xl font-bold text-fuchsia-200">Safe</p>
+                  <p className="mt-1 text-sm text-slate-200">Secure payments</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-secondary-50">
+      <section className="bg-gradient-to-b from-slate-50 to-white py-20">
         <div className="container-custom">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
+          <h2 className="mb-12 text-center text-3xl font-bold text-slate-900 md:text-4xl">
             Why Choose Learnzy?
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
             {/* Feature 1 */}
-            <div className="card p-6 text-center">
+            <div className="rounded-2xl border border-cyan-100 bg-white p-6 text-center shadow-lg shadow-cyan-100/50">
               <div className="text-4xl mb-4">🎯</div>
-              <h3 className="text-xl font-semibold mb-2">Expert Tutors</h3>
-              <p className="text-secondary-600">
+              <h3 className="mb-2 text-xl font-semibold text-slate-900">
+                Expert Tutors
+              </h3>
+              <p className="text-slate-600">
                 Learn from verified experts with proven experience in their
                 fields.
               </p>
             </div>
             {/* Feature 2 */}
-            <div className="card p-6 text-center">
+            <div className="rounded-2xl border border-emerald-100 bg-white p-6 text-center shadow-lg shadow-emerald-100/50">
               <div className="text-4xl mb-4">📅</div>
-              <h3 className="text-xl font-semibold mb-2">
+              <h3 className="mb-2 text-xl font-semibold text-slate-900">
                 Flexible Scheduling
               </h3>
-              <p className="text-secondary-600">
+              <p className="text-slate-600">
                 Book sessions that fit your schedule. Learn at your own pace.
               </p>
             </div>
             {/* Feature 3 */}
-            <div className="card p-6 text-center">
+            <div className="rounded-2xl border border-amber-100 bg-white p-6 text-center shadow-lg shadow-amber-100/50">
               <div className="text-4xl mb-4">⭐</div>
-              <h3 className="text-xl font-semibold mb-2">Verified Reviews</h3>
-              <p className="text-secondary-600">
+              <h3 className="mb-2 text-xl font-semibold text-slate-900">
+                Verified Reviews
+              </h3>
+              <p className="text-slate-600">
                 Read authentic reviews from real students before booking.
               </p>
             </div>
@@ -134,7 +186,7 @@ export default async function Home() {
       {/* Categories Section */}
       <section className="py-20">
         <div className="container-custom">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
+          <h2 className="mb-12 text-center text-3xl font-bold text-slate-900 md:text-4xl">
             Browse by Category
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -143,12 +195,14 @@ export default async function Home() {
                   <Link
                     key={category.id}
                     href={`/tutors?category=${category.id}`}
-                    className="card p-4 text-center hover:border-primary-500 border-2 border-transparent transition-all"
+                    className="rounded-2xl border border-slate-200 bg-white p-4 text-center shadow-sm transition-all hover:-translate-y-1 hover:border-cyan-400 hover:shadow-lg"
                   >
                     <span className="text-2xl block mb-2">
                       {category.icon || "📚"}
                     </span>
-                    <span className="text-lg">{category.name}</span>
+                    <span className="text-lg text-slate-800">
+                      {category.name}
+                    </span>
                   </Link>
                 ))
               : // Fallback if API fails
@@ -163,9 +217,9 @@ export default async function Home() {
                   <Link
                     key={cat}
                     href="/tutors"
-                    className="card p-4 text-center hover:border-primary-500 border-2 border-transparent transition-all"
+                    className="rounded-2xl border border-slate-200 bg-white p-4 text-center shadow-sm transition-all hover:-translate-y-1 hover:border-cyan-400 hover:shadow-lg"
                   >
-                    <span className="text-lg">{cat}</span>
+                    <span className="text-lg text-slate-800">{cat}</span>
                   </Link>
                 ))}
           </div>
@@ -174,12 +228,12 @@ export default async function Home() {
 
       {/* Featured Tutors Section */}
       {featuredTutors.length > 0 && (
-        <section className="py-20 bg-secondary-50">
+        <section className="bg-slate-950 py-20 text-white">
           <div className="container-custom">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">
+            <h2 className="mb-4 text-center text-3xl font-bold md:text-4xl">
               Featured Tutors
             </h2>
-            <p className="text-secondary-600 text-center mb-12 max-w-2xl mx-auto">
+            <p className="mx-auto mb-12 max-w-2xl text-center text-slate-300">
               Learn from our top-rated tutors with proven track records
             </p>
             <div className="grid md:grid-cols-3 gap-8">
@@ -187,10 +241,10 @@ export default async function Home() {
                 <Link
                   key={tutor.id}
                   href={`/tutors/${tutor.id}`}
-                  className="card p-6 hover:shadow-lg transition-shadow"
+                  className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm transition-all hover:-translate-y-1 hover:border-cyan-300/40 hover:bg-white/10"
                 >
                   <div className="flex items-center gap-4 mb-4">
-                    <div className="w-16 h-16 rounded-full bg-primary-100 flex items-center justify-center overflow-hidden">
+                    <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-cyan-200/20">
                       {tutor.user.image ? (
                         <img
                           src={tutor.user.image}
@@ -198,13 +252,13 @@ export default async function Home() {
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <span className="text-2xl font-bold text-primary-600">
+                        <span className="text-2xl font-bold text-cyan-300">
                           {tutor.user.name.charAt(0)}
                         </span>
                       )}
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold text-secondary-900">
+                      <h3 className="text-lg font-semibold text-white">
                         {tutor.user.name}
                       </h3>
                       <div className="flex items-center gap-1 text-yellow-500">
@@ -212,30 +266,30 @@ export default async function Home() {
                         <span className="font-medium">
                           {tutor.rating.toFixed(1)}
                         </span>
-                        <span className="text-secondary-500 text-sm">
+                        <span className="text-sm text-slate-300">
                           ({tutor.totalReviews} reviews)
                         </span>
                       </div>
                     </div>
                   </div>
-                  <p className="text-secondary-600 text-sm mb-4 line-clamp-2">
+                  <p className="mb-4 line-clamp-2 text-sm text-slate-300">
                     {tutor.bio || "Experienced tutor ready to help you learn."}
                   </p>
                   <div className="flex flex-wrap gap-2 mb-4">
                     {tutor.categories.slice(0, 3).map((c) => (
                       <span
                         key={c.category.id}
-                        className="px-2 py-1 bg-primary-50 text-primary-700 text-xs rounded-full"
+                        className="rounded-full bg-cyan-300/20 px-2 py-1 text-xs text-cyan-200"
                       >
                         {c.category.name}
                       </span>
                     ))}
                   </div>
-                  <div className="flex items-center justify-between pt-4 border-t border-secondary-100">
-                    <span className="text-secondary-600 text-sm">
+                  <div className="flex items-center justify-between border-t border-white/10 pt-4">
+                    <span className="text-sm text-slate-300">
                       {tutor.experience} years exp.
                     </span>
-                    <span className="text-primary-600 font-semibold">
+                    <span className="font-semibold text-cyan-300">
                       ${tutor.hourlyRate}/hr
                     </span>
                   </div>
@@ -243,7 +297,10 @@ export default async function Home() {
               ))}
             </div>
             <div className="text-center mt-8">
-              <Link href="/tutors" className="btn-primary text-lg px-8 py-3">
+              <Link
+                href="/tutors"
+                className="btn rounded-xl bg-cyan-400 px-8 py-3 text-lg font-semibold text-slate-950 hover:bg-cyan-300"
+              >
                 View All Tutors
               </Link>
             </div>
@@ -252,17 +309,17 @@ export default async function Home() {
       )}
 
       {/* CTA Section */}
-      <section className="py-20 bg-primary-600 text-white">
+      <section className="bg-gradient-to-r from-emerald-500 via-cyan-500 to-sky-500 py-20 text-white">
         <div className="container-custom text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             Ready to Start Learning?
           </h2>
-          <p className="text-xl text-primary-100 mb-8 max-w-2xl mx-auto">
+          <p className="mx-auto mb-8 max-w-2xl text-xl text-cyan-50">
             Join thousands of students who are already learning with Learnzy.
           </p>
           <Link
             href="/register"
-            className="btn bg-white text-primary-600 hover:bg-primary-50 text-lg px-8 py-3"
+            className="btn rounded-xl bg-slate-950 px-8 py-3 text-lg text-white hover:bg-slate-900"
           >
             Get Started Free
           </Link>
