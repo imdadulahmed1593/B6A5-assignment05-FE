@@ -2,6 +2,7 @@
 export type UserRole = "STUDENT" | "TUTOR" | "ADMIN";
 export type UserStatus = "ACTIVE" | "BANNED";
 export type BookingStatus = "PENDING" | "CONFIRMED" | "COMPLETED" | "CANCELLED";
+export type PaymentStatus = "PENDING" | "PAID" | "FAILED" | "REFUNDED";
 
 export interface User {
   id: string;
@@ -63,7 +64,11 @@ export interface Booking {
   tutorProfileId: string;
   scheduledAt: string;
   duration: number;
+  amount?: number;
+  currency?: string;
   status: BookingStatus;
+  paymentStatus?: PaymentStatus;
+  paidAt?: string;
   notes?: string;
   student?: Pick<User, "id" | "name" | "email" | "image">;
   tutor?: TutorProfile;

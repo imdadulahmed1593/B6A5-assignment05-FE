@@ -27,6 +27,7 @@ interface RegisterFormData {
 export default function RegisterPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -210,13 +211,14 @@ export default function RegisterPage() {
                   className="input-field pl-10 pr-10 w-full focus:outline-none focus:ring-0 focus:border-secondary-200"
                   placeholder="••••••••"
                 />
-                {/* <button
+                <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary-400 hover:text-secondary-600"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? <FiEyeOff /> : <FiEye />}
-                </button> */}
+                </button>
               </div>
               {errors.password && (
                 <p className="text-red-500 text-sm mt-1">
@@ -232,15 +234,27 @@ export default function RegisterPage() {
               <div className="relative">
                 <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary-400" />
                 <input
-                  type={showPassword ? "text" : "password"}
+                  type={showConfirmPassword ? "text" : "password"}
                   {...register("confirmPassword", {
                     required: "Please confirm your password",
                     validate: (value) =>
                       value === password || "Passwords do not match",
                   })}
-                  className="input-field pl-10 w-full focus:outline-none focus:ring-0 focus:border-secondary-200"
+                  className="input-field pl-10 pr-10 w-full focus:outline-none focus:ring-0 focus:border-secondary-200"
                   placeholder="••••••••"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary-400 hover:text-secondary-600"
+                  aria-label={
+                    showConfirmPassword
+                      ? "Hide confirm password"
+                      : "Show confirm password"
+                  }
+                >
+                  {showConfirmPassword ? <FiEyeOff /> : <FiEye />}
+                </button>
               </div>
               {errors.confirmPassword && (
                 <p className="text-red-500 text-sm mt-1">

@@ -1,18 +1,16 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { tutorApi, bookingApi, reviewApi } from "@/lib/api";
+import { useParams } from "next/navigation";
+import { tutorApi, bookingApi, paymentApi, reviewApi } from "@/lib/api";
 import { useSession } from "@/lib/auth-client";
 import { TutorProfile, Review } from "@/types";
 import toast from "react-hot-toast";
 import {
   FiStar,
   FiClock,
-  FiDollarSign,
   FiCalendar,
   FiMail,
-  FiPhone,
   FiUser,
   FiChevronLeft,
 } from "react-icons/fi";
@@ -30,7 +28,6 @@ const DAYS = [
 
 export default function TutorDetailPage() {
   const params = useParams();
-  const router = useRouter();
   const { data: session } = useSession();
   const [tutor, setTutor] = useState<TutorProfile | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -328,11 +325,6 @@ export default function TutorDetailPage() {
         <BookingModal
           tutor={tutor}
           onClose={() => setShowBookingModal(false)}
-          onSuccess={() => {
-            setShowBookingModal(false);
-            toast.success("Booking created successfully!");
-            router.push("/dashboard/bookings");
-          }}
         />
       )}
     </div>
@@ -342,11 +334,9 @@ export default function TutorDetailPage() {
 function BookingModal({
   tutor,
   onClose,
-  onSuccess,
 }: {
   tutor: TutorProfile;
   onClose: () => void;
-  onSuccess: () => void;
 }) {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
@@ -364,13 +354,29 @@ function BookingModal({
     setIsLoading(true);
     try {
       const scheduledAt = new Date(`${date}T${time}`).toISOString();
-      await bookingApi.create({
+      const bookingResponse = await bookingApi.create({
         tutorProfileId: tutor.id,
         scheduledAt,
         duration: Number(duration),
         notes: notes || undefined,
       });
-      onSuccess();
+
+      const bookingId = bookingResponse?.data?.id as string | undefined;
+      if (!bookingId) {
+        throw new Error("Booking was created but booking ID is missing");
+      }
+
+      const paymentResponse = await paymentApi.createCheckoutSession(bookingId);
+      const checkoutUrl = paymentResponse?.data?.checkoutUrl as
+        | string
+        | undefined;
+
+      if (!checkoutUrl) {
+        throw new Error("Failed to initialize checkout session");
+      }
+
+      toast.success("Redirecting to secure payment...");
+      window.location.assign(checkoutUrl);
     } catch (error: any) {
       toast.error(error.message || "Failed to create booking");
     } finally {

@@ -69,6 +69,18 @@ export const bookingApi = {
     api.patch(`/bookings/${id}/complete`).then((res) => res.data),
 };
 
+// API functions for payments
+export const paymentApi = {
+  createCheckoutSession: (bookingId: string) =>
+    api
+      .post("/payments/checkout-session", { bookingId })
+      .then((res) => res.data),
+  confirmCheckoutSession: (sessionId: string) =>
+    api
+      .post("/payments/confirm-session", { sessionId })
+      .then((res) => res.data),
+};
+
 // API functions for reviews
 export const reviewApi = {
   create: (data: any) => api.post("/reviews", data).then((res) => res.data),

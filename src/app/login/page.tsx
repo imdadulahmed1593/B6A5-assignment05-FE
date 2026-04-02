@@ -114,13 +114,14 @@ export default function LoginPage() {
                   className="input-field pl-10 pr-10 w-full focus:outline-none focus:ring-0 focus:border-secondary-200"
                   placeholder="••••••••"
                 />
-                {/* <button
+                <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary-400 hover:text-secondary-600"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? <FiEyeOff /> : <FiEye />}
-                </button> */}
+                </button>
               </div>
               {errors.password && (
                 <p className="text-red-500 text-sm mt-1">

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "@/lib/auth-client";
-import { bookingApi } from "@/lib/api";
+import { bookingApi, paymentApi } from "@/lib/api";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import toast from "react-hot-toast";
@@ -133,6 +133,72 @@ export default function BookingsPage() {
     tutorName: string;
   }>({ isOpen: false, bookingId: "", tutorName: "" });
   const [isCancelling, setIsCancelling] = useState(false);
+  const [isSyncingPayment, setIsSyncingPayment] = useState(false);
+  const [hasHandledReturn, setHasHandledReturn] = useState(false);
+
+  const pollPaymentConfirmation = async (bookingId: string) => {
+    setIsSyncingPayment(true);
+    const maxAttempts = 8;
+    const delayMs = 1500;
+
+    for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+      try {
+        const response = await bookingApi.getById(bookingId);
+        const booking = response?.data as Booking | undefined;
+
+        if (booking?.paymentStatus === "PAID") {
+          await fetchBookings();
+          toast.success("Payment completed and booking confirmed.");
+          setIsSyncingPayment(false);
+          return;
+        }
+      } catch (error) {
+        console.error("Failed to poll payment status:", error);
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+    }
+
+    await fetchBookings();
+    toast("Payment received. Status may take a few seconds to sync.", {
+      icon: "!",
+    });
+    setIsSyncingPayment(false);
+  };
+
+  useEffect(() => {
+    if (hasHandledReturn) {
+      return;
+    }
+
+    const payment = searchParams.get("payment");
+    const bookingId = searchParams.get("bookingId");
+    const sessionId = searchParams.get("session_id");
+
+    if (payment === "success" && bookingId && session?.user) {
+      setHasHandledReturn(true);
+      (async () => {
+        try {
+          if (sessionId) {
+            await paymentApi.confirmCheckoutSession(sessionId);
+          }
+        } catch (error) {
+          console.error("Failed to confirm checkout session:", error);
+        } finally {
+          pollPaymentConfirmation(bookingId);
+          router.replace(`/dashboard/bookings?tab=${activeTab}`);
+        }
+      })();
+    }
+
+    if (payment === "cancel") {
+      setHasHandledReturn(true);
+      toast("Payment canceled. You can pay later from this page.", {
+        icon: "!",
+      });
+      router.replace(`/dashboard/bookings?tab=${activeTab}`);
+    }
+  }, [activeTab, hasHandledReturn, router, searchParams, session?.user]);
 
   useEffect(() => {
     if (!isPending && !session?.user) {
@@ -192,6 +258,21 @@ export default function BookingsPage() {
     }
   };
 
+  const handlePayNow = async (bookingId: string) => {
+    try {
+      const response = await paymentApi.createCheckoutSession(bookingId);
+      const checkoutUrl = response?.data?.checkoutUrl as string | undefined;
+
+      if (!checkoutUrl) {
+        throw new Error("Failed to initialize checkout session");
+      }
+
+      window.location.assign(checkoutUrl);
+    } catch (error: any) {
+      toast.error(error.message || "Failed to start payment");
+    }
+  };
+
   if (isPending) {
     return (
       <div className="container-custom py-12">
@@ -214,6 +295,20 @@ export default function BookingsPage() {
     CONFIRMED: "bg-blue-100 text-blue-700",
     COMPLETED: "bg-green-100 text-green-700",
     CANCELLED: "bg-red-100 text-red-700",
+  };
+
+  const paymentStatusColors: Record<string, string> = {
+    PENDING: "bg-amber-100 text-amber-700",
+    PAID: "bg-emerald-100 text-emerald-700",
+    FAILED: "bg-rose-100 text-rose-700",
+    REFUNDED: "bg-violet-100 text-violet-700",
+  };
+
+  const paymentStatusLabel = (status: string) => {
+    if (status === "PAID") {
+      return "Completed";
+    }
+    return status;
   };
 
   return (
@@ -266,6 +361,12 @@ export default function BookingsPage() {
         </div>
 
         {/* Bookings List */}
+        {isSyncingPayment && (
+          <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
+            Confirming payment with Stripe. Status will update automatically.
+          </div>
+        )}
+
         {isLoading ? (
           <div className="space-y-4">
             {[...Array(5)].map((_, i) => (
@@ -347,6 +448,13 @@ export default function BookingsPage() {
                       >
                         {booking.status}
                       </span>
+                      {booking.paymentStatus && (
+                        <span
+                          className={`px-2 py-0.5 text-xs rounded-full ${paymentStatusColors[booking.paymentStatus]}`}
+                        >
+                          Payment: {paymentStatusLabel(booking.paymentStatus)}
+                        </span>
+                      )}
                     </div>
                     {booking.notes && (
                       <p className="mt-2 text-secondary-600 text-sm">
@@ -371,6 +479,16 @@ export default function BookingsPage() {
                         Cancel Booking
                       </button>
                     )}
+                    {(booking.status === "PENDING" ||
+                      booking.status === "CONFIRMED") &&
+                      booking.paymentStatus !== "PAID" && (
+                        <button
+                          onClick={() => handlePayNow(booking.id)}
+                          className="text-primary-600 hover:text-primary-700 text-sm font-medium"
+                        >
+                          Pay Now
+                        </button>
+                      )}
                     {booking.status === "COMPLETED" && !booking.review && (
                       <Link
                         href={`/dashboard/reviews/create?bookingId=${booking.id}`}
