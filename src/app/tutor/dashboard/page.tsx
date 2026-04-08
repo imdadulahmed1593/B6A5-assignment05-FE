@@ -380,7 +380,7 @@ function BookingCard({
   };
 
   return (
-    <div className="p-4 bg-secondary-50 rounded-lg">
+    <div className="p-4 bg-secondary-50 dark:hover:bg-secondary-700 rounded-lg">
       <div className="flex items-start gap-4">
         <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0">
           <span className="text-lg font-bold text-primary-600">

@@ -30,14 +30,16 @@ async function handler(req: NextRequest) {
     const response = await fetch(backendUrl.toString(), {
       method: req.method,
       headers,
+      redirect: "manual",
       body:
         req.method !== "GET" && req.method !== "HEAD"
           ? await req.text()
           : undefined,
     });
 
-    // Get the response body
-    const body = await response.text();
+    // Do not consume body for redirect responses.
+    const isRedirect = response.status >= 300 && response.status < 400;
+    const body = isRedirect ? "" : await response.text();
 
     // Get all Set-Cookie headers
     const setCookieHeaders = response.headers.getSetCookie?.() || [];
@@ -48,11 +50,17 @@ async function handler(req: NextRequest) {
       setCookieHeaders.length,
     );
 
-    // Create a clean response without backend's CORS headers
+    // Create a clean response without backend's CORS headers.
     const nextResponse = new NextResponse(body, {
       status: response.status,
       statusText: response.statusText,
     });
+
+    // Preserve redirect target so browser performs OAuth navigation.
+    const location = response.headers.get("location");
+    if (location) {
+      nextResponse.headers.set("location", location);
+    }
 
     // Copy content-type header
     const contentType = response.headers.get("content-type");
@@ -94,3 +102,4 @@ export const POST = handler;
 export const PUT = handler;
 export const DELETE = handler;
 export const PATCH = handler;
+export const OPTIONS = handler;

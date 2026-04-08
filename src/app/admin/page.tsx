@@ -7,6 +7,21 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  LineChart,
+  Line,
+  PieChart,
+  Pie,
+  Cell,
+  Legend,
+} from "recharts";
+import {
   FiUsers,
   FiCalendar,
   FiDollarSign,
@@ -28,10 +43,19 @@ interface DashboardStats {
   totalCategories: number;
 }
 
+interface TrendPoint {
+  date: string;
+  bookings: number;
+  completedBookings: number;
+  users: number;
+  revenue: number;
+}
+
 export default function AdminDashboard() {
   const { data: session, isPending } = useSession();
   const router = useRouter();
   const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [trends, setTrends] = useState<TrendPoint[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -53,8 +77,12 @@ export default function AdminDashboard() {
 
   const fetchStats = async () => {
     try {
-      const response = await adminApi.getDashboardStats();
-      setStats(response.data.stats);
+      const [statsResponse, trendsResponse] = await Promise.all([
+        adminApi.getDashboardStats(),
+        adminApi.getDashboardTrends(7),
+      ]);
+      setStats(statsResponse.data.stats);
+      setTrends(trendsResponse.data || []);
     } catch (error) {
       console.error("Failed to fetch stats:", error);
     } finally {
@@ -130,6 +158,19 @@ export default function AdminDashboard() {
     },
   ];
 
+  const bookingPieData = [
+    {
+      name: "Completed",
+      value: stats?.completedBookings || 0,
+    },
+    {
+      name: "Pending",
+      value: stats?.pendingBookings || 0,
+    },
+  ];
+
+  const pieColors = ["#2563eb", "#f59e0b"];
+
   return (
     <div className="bg-secondary-50 min-h-screen">
       <div className="container-custom py-8">
@@ -158,6 +199,81 @@ export default function AdminDashboard() {
               <p className="text-secondary-600 text-sm">{stat.label}</p>
             </div>
           ))}
+        </div>
+
+        <div className="grid lg:grid-cols-2 gap-6 mb-8">
+          <div className="card p-6">
+            <h2 className="text-lg font-semibold text-secondary-900 mb-4">
+              Daily Bookings (7 Days)
+            </h2>
+            <div className="h-72">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={trends}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+                  <YAxis allowDecimals={false} />
+                  <Tooltip />
+                  <Bar
+                    dataKey="bookings"
+                    fill="#2563eb"
+                    radius={[6, 6, 0, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          <div className="card p-6">
+            <h2 className="text-lg font-semibold text-secondary-900 mb-4">
+              Revenue Trend (7 Days)
+            </h2>
+            <div className="h-72">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={trends}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+                  <YAxis />
+                  <Tooltip />
+                  <Line
+                    type="monotone"
+                    dataKey="revenue"
+                    stroke="#0ea5e9"
+                    strokeWidth={3}
+                    dot={{ r: 4 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+
+        <div className="card p-6 mb-8">
+          <h2 className="text-lg font-semibold text-secondary-900 mb-4">
+            Booking Status Distribution
+          </h2>
+          <div className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={bookingPieData}
+                  dataKey="value"
+                  nameKey="name"
+                  innerRadius={80}
+                  outerRadius={120}
+                  paddingAngle={4}
+                >
+                  {bookingPieData.map((entry, index) => (
+                    <Cell
+                      key={entry.name}
+                      fill={pieColors[index % pieColors.length]}
+                    />
+                  ))}
+                </Pie>
+                <Legend />
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
         </div>
 
         {/* Quick Actions */}

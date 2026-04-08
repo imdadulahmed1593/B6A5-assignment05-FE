@@ -212,7 +212,7 @@ export default function AdminCategoriesPage() {
                   <button
                     type="button"
                     onClick={resetForm}
-                    className="btn bg-secondary-100 text-secondary-700 hover:bg-secondary-200"
+                    className="btn bg-secondary-100 text-secondary-700 hover:bg-secondary-200 dark:hover:text-red-700"
                   >
                     Cancel
                   </button>
@@ -251,7 +251,7 @@ export default function AdminCategoriesPage() {
                 </button>
               </div>
             ) : (
-              <div className="divide-y divide-secondary-100">
+              <div className="divide-y divide-secondary-100 dark:divide-secondary-700">
                 {categories.map((category) => (
                   <div
                     key={category.id}

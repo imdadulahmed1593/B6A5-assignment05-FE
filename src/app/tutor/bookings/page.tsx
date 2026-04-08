@@ -295,7 +295,7 @@ export default function TutorBookingsPage() {
                         </button>
                         <button
                           onClick={() => handleCancel(booking.id)}
-                          className="text-red-600 hover:text-red-700 text-sm font-medium"
+                          className="text-red-600 hover:text-red-700 text-sm font-medium mt-2 mr-2"
                         >
                           Cancel
                         </button>

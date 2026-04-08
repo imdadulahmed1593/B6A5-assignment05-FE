@@ -9,9 +9,16 @@ import {
   FiSearch,
   FiFilter,
   FiStar,
-  FiMapPin,
-  FiDollarSign,
+  FiTrendingUp,
+  FiChevronDown,
 } from "react-icons/fi";
+
+interface SearchSuggestion {
+  tutorId: string;
+  name: string;
+  categories: string[];
+  rating: number;
+}
 
 export default function TutorsPage() {
   const searchParams = useSearchParams();
@@ -21,6 +28,11 @@ export default function TutorsPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([]);
+  const [isSuggesting, setIsSuggesting] = useState(false);
+  const [recommendedTutors, setRecommendedTutors] = useState<TutorProfile[]>(
+    [],
+  );
   const [selectedCategory, setSelectedCategory] = useState(categoryFromUrl);
   const [minRating, setMinRating] = useState("");
   const [sortBy, setSortBy] = useState("rating");
@@ -40,6 +52,35 @@ export default function TutorsPage() {
   useEffect(() => {
     fetchTutors();
   }, [page, selectedCategory, minRating, sortBy]);
+
+  useEffect(() => {
+    fetchRecommendations();
+  }, [selectedCategory]);
+
+  useEffect(() => {
+    const trimmed = search.trim();
+    if (trimmed.length < 2) {
+      setSuggestions([]);
+      return;
+    }
+
+    const timeoutId = setTimeout(async () => {
+      try {
+        setIsSuggesting(true);
+        const response = await tutorApi.getSuggestions({
+          q: trimmed,
+          limit: 6,
+        });
+        setSuggestions(response.data || []);
+      } catch (error) {
+        console.error("Failed to fetch suggestions:", error);
+      } finally {
+        setIsSuggesting(false);
+      }
+    }, 250);
+
+    return () => clearTimeout(timeoutId);
+  }, [search]);
 
   const fetchCategories = async () => {
     try {
@@ -73,6 +114,18 @@ export default function TutorsPage() {
     }
   };
 
+  const fetchRecommendations = async () => {
+    try {
+      const response = await tutorApi.getRecommendations({
+        categoryId: selectedCategory || undefined,
+        limit: 8,
+      });
+      setRecommendedTutors(response.data || []);
+    } catch (error) {
+      console.error("Failed to fetch recommendations:", error);
+    }
+  };
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     setPage(1);
@@ -80,11 +133,11 @@ export default function TutorsPage() {
   };
 
   return (
-    <div className="bg-secondary-50 min-h-screen">
+    <div className="bg-secondary-50 dark:bg-secondary-950 min-h-screen">
       {/* Header */}
-      <div className="bg-white border-b">
+      <div className="bg-white dark:bg-secondary-900 border-b border-secondary-200 dark:border-secondary-800">
         <div className="container-custom py-8">
-          <h1 className="text-3xl font-bold text-secondary-900 mb-4">
+          <h1 className="text-3xl font-bold text-secondary-900 dark:text-secondary-100 mb-4">
             Find Your Perfect Tutor
           </h1>
 
@@ -97,8 +150,39 @@ export default function TutorsPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search by name or subject..."
-                className="input-field pl-12 w-full focus:outline-none focus:ring-0 focus:border-secondary-200"
+                className="w-full rounded-xl border border-secondary-300 dark:border-secondary-700 bg-white dark:bg-secondary-900 text-secondary-900 dark:text-secondary-100 pl-12 pr-4 py-2.5 placeholder:text-secondary-400 dark:placeholder:text-secondary-500 focus:outline-none focus:ring-2 focus:ring-primary-500"
               />
+              {(isSuggesting || suggestions.length > 0) && (
+                <div className="absolute top-[110%] left-0 right-0 z-20 rounded-xl border border-secondary-200 dark:border-secondary-700 bg-white dark:bg-secondary-900 shadow-lg overflow-hidden">
+                  {isSuggesting ? (
+                    <p className="px-4 py-3 text-sm text-secondary-500 dark:text-secondary-400">
+                      Loading suggestions...
+                    </p>
+                  ) : (
+                    suggestions.map((suggestion) => (
+                      <button
+                        key={suggestion.tutorId}
+                        type="button"
+                        onClick={() => {
+                          setSearch(suggestion.name);
+                          setSuggestions([]);
+                          setPage(1);
+                          fetchTutors();
+                        }}
+                        className="w-full px-4 py-3 text-left hover:bg-secondary-50 dark:hover:bg-secondary-800 border-b border-secondary-100 dark:border-secondary-700 last:border-b-0"
+                      >
+                        <p className="font-medium text-secondary-900 dark:text-secondary-100">
+                          {suggestion.name}
+                        </p>
+                        <p className="text-xs text-secondary-500 dark:text-secondary-400">
+                          {suggestion.categories.slice(0, 2).join(", ")} •{" "}
+                          {suggestion.rating.toFixed(1)}★
+                        </p>
+                      </button>
+                    ))
+                  )}
+                </div>
+              )}
             </div>
             <button type="submit" className="btn-primary px-8">
               Search
@@ -106,7 +190,7 @@ export default function TutorsPage() {
             <button
               type="button"
               onClick={() => setShowFilters(!showFilters)}
-              className="btn bg-secondary-100 text-secondary-700 hover:bg-secondary-200 px-4 md:hidden"
+              className="btn bg-secondary-100 dark:bg-secondary-800 text-secondary-700 dark:text-secondary-200 hover:bg-secondary-200 dark:hover:bg-secondary-700 px-4 md:hidden"
             >
               <FiFilter />
             </button>
@@ -121,67 +205,78 @@ export default function TutorsPage() {
             className={`w-64 flex-shrink-0 ${showFilters ? "block" : "hidden md:block"}`}
           >
             <div className="card p-6 sticky top-24">
-              <h2 className="font-semibold text-lg mb-4">Filters</h2>
+              <h2 className="font-semibold text-lg mb-4 text-secondary-900 dark:text-secondary-100">
+                Filters
+              </h2>
 
               {/* Category Filter */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-secondary-700 mb-2">
+                <label className="block text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-2">
                   Category
                 </label>
-                <select
-                  value={selectedCategory}
-                  onChange={(e) => {
-                    setSelectedCategory(e.target.value);
-                    setPage(1);
-                  }}
-                  className="input-field w-full focus:outline-none focus:ring-0 focus:border-secondary-200"
-                >
-                  <option value="">All Categories</option>
-                  {categories.map((cat) => (
-                    <option key={cat.id} value={cat.id}>
-                      {cat.name}
-                    </option>
-                  ))}
-                </select>
+                <div className="relative">
+                  <select
+                    value={selectedCategory}
+                    onChange={(e) => {
+                      setSelectedCategory(e.target.value);
+                      setPage(1);
+                    }}
+                    className="w-full appearance-none rounded-xl border border-secondary-300 dark:border-secondary-700 bg-white dark:bg-secondary-900 text-secondary-900 dark:text-secondary-100 px-4 pr-11 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  >
+                    <option value="">All Categories</option>
+                    {categories.map((cat) => (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.name}
+                      </option>
+                    ))}
+                  </select>
+                  <FiChevronDown className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-secondary-400" />
+                </div>
               </div>
 
               {/* Rating Filter */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-secondary-700 mb-2">
+                <label className="block text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-2">
                   Minimum Rating
                 </label>
-                <select
-                  value={minRating}
-                  onChange={(e) => {
-                    setMinRating(e.target.value);
-                    setPage(1);
-                  }}
-                  className="input-field w-full focus:outline-none focus:ring-0 focus:border-secondary-200"
-                >
-                  <option value="">Any Rating</option>
-                  <option value="4">4+ Stars</option>
-                  <option value="3">3+ Stars</option>
-                  <option value="2">2+ Stars</option>
-                </select>
+                <div className="relative">
+                  <select
+                    value={minRating}
+                    onChange={(e) => {
+                      setMinRating(e.target.value);
+                      setPage(1);
+                    }}
+                    className="w-full appearance-none rounded-xl border border-secondary-300 dark:border-secondary-700 bg-white dark:bg-secondary-900 text-secondary-900 dark:text-secondary-100 px-4 pr-11 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  >
+                    <option value="">Any Rating</option>
+                    <option value="4">4+ Stars</option>
+                    <option value="3">3+ Stars</option>
+                    <option value="2">2+ Stars</option>
+                  </select>
+                  <FiChevronDown className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-secondary-400" />
+                </div>
               </div>
 
               {/* Sort By */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-secondary-700 mb-2">
+                <label className="block text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-2">
                   Sort By
                 </label>
-                <select
-                  value={sortBy}
-                  onChange={(e) => {
-                    setSortBy(e.target.value);
-                    setPage(1);
-                  }}
-                  className="input-field w-full focus:outline-none focus:ring-0 focus:border-secondary-200"
-                >
-                  <option value="rating">Highest Rated</option>
-                  <option value="price">Price</option>
-                  <option value="experience">Experience</option>
-                </select>
+                <div className="relative">
+                  <select
+                    value={sortBy}
+                    onChange={(e) => {
+                      setSortBy(e.target.value);
+                      setPage(1);
+                    }}
+                    className="w-full appearance-none rounded-xl border border-secondary-300 dark:border-secondary-700 bg-white dark:bg-secondary-900 text-secondary-900 dark:text-secondary-100 px-4 pr-11 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  >
+                    <option value="rating">Highest Rated</option>
+                    <option value="price">Price</option>
+                    <option value="experience">Experience</option>
+                  </select>
+                  <FiChevronDown className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-secondary-400" />
+                </div>
               </div>
 
               <button
@@ -201,8 +296,26 @@ export default function TutorsPage() {
 
           {/* Tutors Grid */}
           <main className="flex-1">
+            {recommendedTutors.length > 0 && (
+              <section className="mb-8">
+                <div className="flex items-center gap-2 mb-4">
+                  <FiTrendingUp className="text-primary-600" />
+                  <h2 className="text-xl font-semibold text-secondary-900 dark:text-secondary-100">
+                    {selectedCategory
+                      ? "Recommended in this Category"
+                      : "Trending Tutors"}
+                  </h2>
+                </div>
+                <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
+                  {recommendedTutors.slice(0, 4).map((tutor) => (
+                    <TutorCard key={`recommended-${tutor.id}`} tutor={tutor} />
+                  ))}
+                </div>
+              </section>
+            )}
+
             {isLoading ? (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
                 {[...Array(6)].map((_, i) => (
                   <div key={i} className="card p-6 animate-pulse">
                     <div className="w-20 h-20 bg-secondary-200 rounded-full mx-auto mb-4" />
@@ -232,7 +345,7 @@ export default function TutorsPage() {
                 <div className="mb-4 text-secondary-600">
                   {meta?.total} tutor{meta?.total !== 1 ? "s" : ""} found
                 </div>
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
                   {tutors.map((tutor) => (
                     <TutorCard key={tutor.id} tutor={tutor} />
                   ))}
@@ -244,7 +357,7 @@ export default function TutorsPage() {
                     <button
                       onClick={() => setPage(page - 1)}
                       disabled={page === 1}
-                      className="btn bg-white border border-secondary-200 disabled:opacity-50"
+                      className="btn bg-white dark:bg-secondary-900 text-secondary-700 dark:text-secondary-200 border border-secondary-200 dark:border-secondary-700 disabled:opacity-50"
                     >
                       Previous
                     </button>
@@ -254,7 +367,7 @@ export default function TutorsPage() {
                     <button
                       onClick={() => setPage(page + 1)}
                       disabled={page === meta.totalPages}
-                      className="btn bg-white border border-secondary-200 disabled:opacity-50"
+                      className="btn bg-white dark:bg-secondary-900 text-secondary-700 dark:text-secondary-200 border border-secondary-200 dark:border-secondary-700 disabled:opacity-50"
                     >
                       Next
                     </button>
@@ -290,7 +403,7 @@ function TutorCard({ tutor }: { tutor: TutorProfile }) {
           </div>
 
           {/* Name */}
-          <h3 className="font-semibold text-lg text-secondary-900">
+          <h3 className="font-semibold text-lg text-secondary-900 dark:text-secondary-100">
             {tutor.user.name}
           </h3>
 

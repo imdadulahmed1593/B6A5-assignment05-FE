@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import { tutorApi, bookingApi, paymentApi, reviewApi } from "@/lib/api";
 import { useSession } from "@/lib/auth-client";
@@ -338,6 +338,8 @@ function BookingModal({
   tutor: TutorProfile;
   onClose: () => void;
 }) {
+  const dateInputRef = useRef<HTMLInputElement | null>(null);
+  const timeInputRef = useRef<HTMLInputElement | null>(null);
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [duration, setDuration] = useState("60");
@@ -396,27 +398,65 @@ function BookingModal({
             <label className="block text-sm font-medium text-secondary-700 mb-2">
               Date
             </label>
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              min={new Date().toISOString().split("T")[0]}
-              className="input-field w-full focus:outline-none focus:ring-0 focus:border-secondary-200"
-              required
-            />
+            <div className="relative">
+              <input
+                ref={dateInputRef}
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                min={new Date().toISOString().split("T")[0]}
+                className="input-field w-full pr-12 appearance-none focus:outline-none focus:ring-0 focus:border-secondary-200"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  const input = dateInputRef.current;
+                  if (!input) return;
+                  if (typeof input.showPicker === "function") {
+                    input.showPicker();
+                  } else {
+                    input.focus();
+                  }
+                }}
+                className="absolute right-3 top-1/2 -translate-y-1/2 h-8 w-8 rounded-md text-secondary-400 dark:text-secondary-300 hover:bg-secondary-100 dark:hover:bg-secondary-800 flex items-center justify-center"
+                aria-label="Open date picker"
+              >
+                <FiCalendar />
+              </button>
+            </div>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-secondary-700 mb-2">
               Time
             </label>
-            <input
-              type="time"
-              value={time}
-              onChange={(e) => setTime(e.target.value)}
-              className="input-field w-full focus:outline-none focus:ring-0 focus:border-secondary-200"
-              required
-            />
+            <div className="relative">
+              <input
+                ref={timeInputRef}
+                type="time"
+                value={time}
+                onChange={(e) => setTime(e.target.value)}
+                className="input-field w-full pr-12 appearance-none focus:outline-none focus:ring-0 focus:border-secondary-200"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  const input = timeInputRef.current;
+                  if (!input) return;
+                  if (typeof input.showPicker === "function") {
+                    input.showPicker();
+                  } else {
+                    input.focus();
+                  }
+                }}
+                className="absolute right-3 top-1/2 -translate-y-1/2 h-8 w-8 rounded-md text-secondary-400 dark:text-secondary-300 hover:bg-secondary-100 dark:hover:bg-secondary-800 flex items-center justify-center"
+                aria-label="Open time picker"
+              >
+                <FiClock />
+              </button>
+            </div>
           </div>
 
           <div>

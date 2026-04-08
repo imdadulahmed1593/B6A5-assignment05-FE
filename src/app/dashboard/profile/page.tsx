@@ -279,7 +279,7 @@ export default function ProfilePage() {
                           image: profile.image || "",
                         });
                       }}
-                      className="btn bg-secondary-100 text-secondary-700 hover:bg-secondary-200 flex-1"
+                      className="btn bg-secondary-100 text-secondary-700 hover:bg-secondary-200 hover:text-secondary-500 flex-1"
                     >
                       Cancel
                     </button>

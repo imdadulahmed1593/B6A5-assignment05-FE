@@ -28,6 +28,10 @@ api.interceptors.response.use(
 export const tutorApi = {
   search: (params?: Record<string, any>) =>
     api.get("/tutors", { params }).then((res) => res.data),
+  getSuggestions: (params?: Record<string, any>) =>
+    api.get("/tutors/suggestions", { params }).then((res) => res.data),
+  getRecommendations: (params?: Record<string, any>) =>
+    api.get("/tutors/recommendations", { params }).then((res) => res.data),
   getById: (id: string) => api.get(`/tutors/${id}`).then((res) => res.data),
   createProfile: (data: any) =>
     api.post("/tutors/profile", data).then((res) => res.data),
@@ -105,6 +109,10 @@ export const userApi = {
 // API functions for admin
 export const adminApi = {
   getDashboardStats: () => api.get("/admin/dashboard").then((res) => res.data),
+  getDashboardTrends: (days = 7) =>
+    api
+      .get("/admin/dashboard/trends", { params: { days } })
+      .then((res) => res.data),
   getUsers: (params?: Record<string, any>) =>
     api.get("/admin/users", { params }).then((res) => res.data),
   getUserById: (id: string) =>

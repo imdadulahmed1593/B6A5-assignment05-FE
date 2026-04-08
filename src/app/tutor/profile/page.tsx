@@ -369,7 +369,7 @@ export default function TutorProfilePage() {
                             [],
                         });
                       }}
-                      className="btn bg-secondary-100 text-secondary-700 hover:bg-secondary-200 flex-1"
+                      className="btn bg-secondary-100 text-secondary-700 hover:bg-secondary-200 dark:hover:text-red-700 flex-1"
                     >
                       Cancel
                     </button>
@@ -579,7 +579,7 @@ export default function TutorProfilePage() {
                               );
                             }
                           }}
-                          className="btn bg-secondary-100 text-secondary-700 hover:bg-secondary-200 flex-1"
+                          className="btn bg-secondary-100 text-secondary-700 hover:bg-secondary-200 dark:hover:text-red-700 flex-1"
                         >
                           Cancel
                         </button>

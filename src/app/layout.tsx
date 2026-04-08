@@ -19,8 +19,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${inter.variable} font-sans antialiased`}>
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={`${inter.variable} font-sans antialiased bg-secondary-50 dark:bg-secondary-950 text-secondary-900 dark:text-secondary-100`}
+      >
         <Toaster position="top-center" />
         <div className="flex flex-col min-h-screen">
           <Navbar />

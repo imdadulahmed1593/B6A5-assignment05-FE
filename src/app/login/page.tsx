@@ -17,12 +17,34 @@ export default function LoginPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSocialLoading, setIsSocialLoading] = useState(false);
 
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<LoginFormData>();
+
+  const fillDemoCredentials = () => {
+    setValue("email", "admin@skillbridge.com");
+    setValue("password", "admin123");
+    toast.success("Demo credentials filled");
+  };
+
+  const handleGoogleLogin = async () => {
+    setIsSocialLoading(true);
+    try {
+      const callbackURL = `${window.location.origin}/dashboard`;
+      await signIn.social({
+        provider: "google",
+        callbackURL,
+      });
+    } catch (error: any) {
+      setIsSocialLoading(false);
+      toast.error(error?.message || "Google login is not configured");
+    }
+  };
 
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
@@ -70,6 +92,14 @@ export default function LoginPage() {
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <button
+              type="button"
+              onClick={fillDemoCredentials}
+              className="btn-secondary w-full"
+            >
+              Use Demo Login
+            </button>
+
             <div>
               <label className="block text-sm font-medium text-secondary-700 mb-2">
                 Email Address
@@ -136,6 +166,17 @@ export default function LoginPage() {
               className="btn-primary w-full py-3 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? "Signing in..." : "Sign In"}
+            </button>
+
+            <button
+              type="button"
+              onClick={handleGoogleLogin}
+              disabled={isSocialLoading}
+              className="btn-outline w-full py-3 disabled:opacity-60"
+            >
+              {isSocialLoading
+                ? "Redirecting to Google..."
+                : "Continue with Google"}
             </button>
           </form>
 

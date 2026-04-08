@@ -3,7 +3,7 @@ import { FiGithub, FiLinkedin, FiTwitter } from "react-icons/fi";
 
 export default function Footer() {
   return (
-    <footer className="bg-secondary-900 text-secondary-300">
+    <footer className="bg-secondary-900 text-secondary-300 border-t border-secondary-800">
       <div className="container-custom py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
@@ -16,19 +16,25 @@ export default function Footer() {
             </p>
             <div className="flex space-x-4">
               <a
-                href="#"
+                href="https://x.com"
+                target="_blank"
+                rel="noreferrer"
                 className="text-secondary-400 hover:text-white transition-colors"
               >
                 <FiTwitter size={20} />
               </a>
               <a
-                href="#"
+                href="https://www.linkedin.com"
+                target="_blank"
+                rel="noreferrer"
                 className="text-secondary-400 hover:text-white transition-colors"
               >
                 <FiLinkedin size={20} />
               </a>
               <a
-                href="#"
+                href="https://github.com"
+                target="_blank"
+                rel="noreferrer"
                 className="text-secondary-400 hover:text-white transition-colors"
               >
                 <FiGithub size={20} />
@@ -54,6 +60,14 @@ export default function Footer() {
                   className="hover:text-white transition-colors"
                 >
                   Categories
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/about"
+                  className="hover:text-white transition-colors"
+                >
+                  About
                 </Link>
               </li>
               <li>
@@ -93,6 +107,14 @@ export default function Footer() {
                   className="hover:text-white transition-colors"
                 >
                   Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/terms"
+                  className="hover:text-white transition-colors"
+                >
+                  Terms of Service
                 </Link>
               </li>
             </ul>

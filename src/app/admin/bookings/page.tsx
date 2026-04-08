@@ -296,7 +296,7 @@ export default function AdminBookingsPage() {
         </div>
 
         {/* Filter */}
-        <div className="card p-4 mb-6">
+        <div className="mb-6">
           <div className="flex items-center gap-4">
             <FiFilter className="text-secondary-600" />
             <select
@@ -340,7 +340,7 @@ export default function AdminBookingsPage() {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-secondary-50">
+                <thead className="bg-secondary-50 dark:bg-secondary-700">
                   <tr>
                     <th className="px-6 py-4 text-left text-sm font-medium text-secondary-600">
                       Student
@@ -362,7 +362,7 @@ export default function AdminBookingsPage() {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-secondary-100">
+                <tbody className="divide-y divide-secondary-100 dark:divide-secondary-700">
                   {bookings.map((booking) => (
                     <tr key={booking.id} className="hover:bg-secondary-50">
                       <td className="px-6 py-4">

@@ -280,7 +280,7 @@ export default function AdminUsersPage() {
         </div>
 
         {/* Filters */}
-        <div className="card p-4 mb-6">
+        <div className=" mb-6">
           <div className="flex flex-col sm:flex-row gap-4">
             <form onSubmit={handleSearch} className="flex-1">
               <div className="relative">
@@ -336,7 +336,7 @@ export default function AdminUsersPage() {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-secondary-50">
+                <thead className="bg-secondary-50 dark:bg-secondary-700">
                   <tr>
                     <th className="px-6 py-4 text-left text-sm font-medium text-secondary-600">
                       User
@@ -358,7 +358,7 @@ export default function AdminUsersPage() {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-secondary-100">
+                <tbody className="divide-y divide-secondary-100 dark:divide-secondary-700">
                   {users.map((user) => (
                     <tr key={user.id} className="hover:bg-secondary-50">
                       <td className="px-6 py-4">
